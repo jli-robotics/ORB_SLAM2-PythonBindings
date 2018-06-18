@@ -1,4 +1,6 @@
 # ORB_SLAM2-PythonBindings
+This repository is adapted from jskinn's repository with the same name.
+
 A python wrapper for ORB_SLAM2, which can be found at [https://github.com/raulmur/ORB_SLAM2](https://github.com/raulmur/ORB_SLAM2).
 This is designed to work with the base version of ORB_SLAM2, with a couple of minimal API changes to access the system output.
 It has been tested on ubuntu 14.04 and 16.04 and built against Python3, although it does not rely on any python3 features.
