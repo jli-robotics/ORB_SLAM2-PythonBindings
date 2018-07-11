@@ -112,12 +112,12 @@ void ORBSlamPython::reset()
     }
 }
 
-bool ORBSlamPython::loadAndProcessMono(std::string imageFile, double timestamp)
+cv::Mat ORBSlamPython::loadAndProcessMono(std::string imageFile, double timestamp)
 {
-    if (!system)
+    /*if (!system)
     {
         return false;
-    }
+    }*/
     cv::Mat im = cv::imread(imageFile, cv::IMREAD_COLOR);
     if (bUseRGB)
     {
@@ -126,9 +126,9 @@ bool ORBSlamPython::loadAndProcessMono(std::string imageFile, double timestamp)
     return this->processMono(im, timestamp);
 }
 
-bool ORBSlamPython::processMono(cv::Mat image, double timestamp)
+cv::Mat ORBSlamPython::processMono(cv::Mat image, double timestamp)
 {
-    if (!system)
+    /*if (!system)
     {
         return false;
     }
@@ -140,7 +140,10 @@ bool ORBSlamPython::processMono(cv::Mat image, double timestamp)
     else
     {
         return false;
-    }
+    }*/
+    
+    cv::Mat pose = system->TrackMonocular(image, timestamp);
+    return pose;
 }
 
 bool ORBSlamPython::loadAndProcessStereo(std::string leftImageFile, std::string rightImageFile, double timestamp)
