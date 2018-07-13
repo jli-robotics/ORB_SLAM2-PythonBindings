@@ -38,6 +38,7 @@ find_package(Boost ${BOOST_VERSION} REQUIRED COMPONENTS ${BOOST_PYTHON_COMPONENT
 find_package(OpenCV REQUIRED)
 find_package(ORB_SLAM2 REQUIRED)
 find_package(Pangolin)
+find_package(Eigen3)
 
 # RPATH fiddling for the library, so that the installed version can find the linked libraries
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
@@ -48,6 +49,7 @@ ${ORB_SLAM2_INCLUDE_DIR}
 ${Boost_INCLUDE_DIRS}
 ${PYTHON_INCLUDE_DIRS}
 ${PYTHON_NUMPY_INCLUDE_DIR}
+${EIGEN3_INCLUDE_DIR}
 )
 if (Pangolin_FOUND)
   include_directories(${Pangolin_INCLUDE_DIRS})
