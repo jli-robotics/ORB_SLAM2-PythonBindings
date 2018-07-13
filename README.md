@@ -17,8 +17,12 @@ It has been tested on ubuntu 14.04 and 16.04 and built against Python3, although
 ### Setup
 
 #### Modifying ORBSLAM2
+
+*Note: "orbslam-changes.diff" has changed from jskinn's original version. Below is the original documentation, but we've introduced additional changes.*
+
 First, we need an additional API method from ORBSLAM to extract completed trajectories.
 Apply the patch file "orbslam-changes.diff" to the ORBSLAM2 source, which should create an additional method and add some installation instructions to the end of CMakeLists.txt.
+
 Build orbslam as normal, and then run `make install`. This will install the ORBSLAM2 headers and .so to /usr/local
 (if an alternative installation directory is desired, specify it to cmake using `-DCMAKE_INSTALL_PREFIX=/your/desired/location`).
 
