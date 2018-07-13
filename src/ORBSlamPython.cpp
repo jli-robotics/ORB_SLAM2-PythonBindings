@@ -57,6 +57,8 @@ BOOST_PYTHON_MODULE(orbslam2)
         .def("get_tracking_state", &ORBSlamPython::getTrackingState)
         .def("get_num_features", &ORBSlamPython::getNumFeatures)
         .def("get_num_matched_features", &ORBSlamPython::getNumMatches)
+        .def("activate_localization_mode",  &ORBSlamPython::activateLocalizationMode)
+        .def("deactivate_localization_mode",  &ORBSlamPython::deactivateLocalizationMode)
         .def("save_settings", &ORBSlamPython::saveSettings)
         .def("load_settings", &ORBSlamPython::loadSettings)
         .def("save_settings_file", &ORBSlamPython::saveSettingsFile)
@@ -404,6 +406,20 @@ boost::python::list ORBSlamPython::getAllMapPoints() const {
       );
   }
   return points;
+}
+
+void ORBSlamPython::activateLocalizationMode()
+{
+  if (system) {
+    system->ActivateLocalizationMode();
+  }
+}
+
+void ORBSlamPython::deactivateLocalizationMode()
+{
+  if (system) {
+    system->DeactivateLocalizationMode();
+  }
 }
 
 void ORBSlamPython::setMode(ORB_SLAM2::System::eSensor mode)
