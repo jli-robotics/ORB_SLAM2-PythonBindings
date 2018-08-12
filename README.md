@@ -21,7 +21,19 @@ It has been tested on ubuntu 14.04 and 16.04 and built against Python3, although
 *Note: "orbslam-changes.diff" has changed from jskinn's original version. Below is the original documentation, but we've introduced additional changes.*
 
 First, we need an additional API method from ORBSLAM to extract completed trajectories.
-Apply the patch file "orbslam-changes.diff" to the ORBSLAM2 source, which should create an additional method and add some installation instructions to the end of CMakeLists.txt.
+Apply the patch file "orbslam-changes.diff" to the ORBSLAM2 source, which should create an additional method and add some installation instructions to the end of CMakeLists.txt. The command to do this is
+
+```
+git apply ../ORB_SLAM2-PythonBindings/orbslam-changes.diff
+```
+
+When compiling on Ubuntu 18.04, you might see a message saying that usleep is not declared. This can be fixed by adding the following three lines to each file with this problem. This solution is obtained from wangzheqie's post: https://github.com/raulmur/ORB_SLAM2/issues/337
+
+```
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+```
 
 Build orbslam as normal, and then run `make install`. This will install the ORBSLAM2 headers and .so to /usr/local
 (if an alternative installation directory is desired, specify it to cmake using `-DCMAKE_INSTALL_PREFIX=/your/desired/location`).
