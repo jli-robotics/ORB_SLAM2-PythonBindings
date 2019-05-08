@@ -37,7 +37,7 @@ When compiling on Ubuntu 18.04, you might see a message saying that usleep is no
 #include <stdlib.h>
 ```
 
-Build orbslam as normal, and then run `make install`. This will install the ORBSLAM2 headers and .so to /usr/local
+Build orbslam as normal by using the provided .build.sh script. This will create a build folder inside ORB_SLAM2. Go into the build folder and run `make install`. This will install the ORBSLAM2 headers and .so to /usr/local
 (if an alternative installation directory is desired, specify it to cmake using `-DCMAKE_INSTALL_PREFIX=/your/desired/location`).
 
 #### Compilation
