@@ -57,6 +57,7 @@ BOOST_PYTHON_MODULE(orbslam2)
         .def("get_tracking_state", &ORBSlamPython::getTrackingState)
         .def("get_num_features", &ORBSlamPython::getNumFeatures)
         .def("get_num_matched_features", &ORBSlamPython::getNumMatches)
+        .def("correct_loop", &ORBSlamPython::correctLoop)
         .def("activate_localization_mode",  &ORBSlamPython::activateLocalizationMode)
         .def("deactivate_localization_mode",  &ORBSlamPython::deactivateLocalizationMode)
         .def("save_settings", &ORBSlamPython::saveSettings)
@@ -295,6 +296,7 @@ boost::python::list ORBSlamPython::getKeyframePoints() const
         cv::Mat t = pKF->GetCameraCenter();
         trajectory.append(boost::python::make_tuple(
                               pKF->mTimeStamp,
+                              pKF->mnId,
                               R.at<float>(0,0),
                               R.at<float>(0,1),
                               R.at<float>(0,2),
@@ -311,6 +313,11 @@ boost::python::list ORBSlamPython::getKeyframePoints() const
     }
 
     return trajectory;
+}
+
+boost::python::list ORBSlamPython::correctLoop() const
+{
+
 }
 
 boost::python::list ORBSlamPython::getTrajectoryPoints() const
