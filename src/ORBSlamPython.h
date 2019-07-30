@@ -32,6 +32,11 @@ public:
     boost::python::list getKeyframePoints() const;
     boost::python::list getTrajectoryPoints() const;
     boost::python::list getAllMapPoints() const;
+    void correctLoop(long unsigned int loopMnId,
+                     long unsigned int curMnId,
+                     boost::python::dict corrections,
+                     boost::python::dict loopConnections) const;
+    ORB_SLAM2::KeyFrame* GetKeyFrameById(long unsigned int query) const;
     void activateLocalizationMode();
     void deactivateLocalizationMode();
     bool saveSettings(boost::python::dict settings) const;
