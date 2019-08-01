@@ -349,7 +349,14 @@ void ORBSlamPython::correctLoop(long unsigned int loopMnId,
         long unsigned int mnId = extractedKey;
         ORB_SLAM2::KeyFrame* pKF = ORBSlamPython::GetKeyFrameById(mnId);
         
-        boost::python::extract<boost::python::list> extractedValue(corrections[mnId]);
+        boost::python::list s3v = boost::python::extract<boost::python::list>(corrections[mnId]);
+        boost::python::list kfList = boost::python::extract<boost::python::list>(loopConnections[mnId]);
+        
+        //boost::python::list things(&extractedValue);
+        
+        //cout << "um...wtf" << things.at(0);
+        
+        /*boost::python::extract<boost::python::list> extractedValue(corrections[mnId]);
         if (!extractedValue.check()) {
             std::cout << "Problem with accessing list in corrections dictionary" << std::endl;
             continue;
@@ -359,27 +366,27 @@ void ORBSlamPython::correctLoop(long unsigned int loopMnId,
         if (!extractedConValue.check()) {
             std::cout << "Problem with accessing list in loopConnections dictionary" << std::endl;
             continue;
-        }
+        }*/
         
         // Deal with sim3 related matters
-        boost::python::list val(extractedValue);
+        //boost::python::list val(extractedValue);
         Eigen::Matrix<double,3,3> R;
         
-        boost::python::extract<double> r1(val[0]);
-        boost::python::extract<double> r2(val[1]);
-        boost::python::extract<double> r3(val[2]);
-        boost::python::extract<double> r4(val[3]);
-        boost::python::extract<double> r5(val[4]);
-        boost::python::extract<double> r6(val[5]);
-        boost::python::extract<double> r7(val[6]);
-        boost::python::extract<double> r8(val[7]);
-        boost::python::extract<double> r9(val[8]);
+        boost::python::extract<double> r1(s3v[0]);
+        boost::python::extract<double> r2(s3v[1]);
+        boost::python::extract<double> r3(s3v[2]);
+        boost::python::extract<double> r4(s3v[3]);
+        boost::python::extract<double> r5(s3v[4]);
+        boost::python::extract<double> r6(s3v[5]);
+        boost::python::extract<double> r7(s3v[6]);
+        boost::python::extract<double> r8(s3v[7]);
+        boost::python::extract<double> r9(s3v[8]);
         
-        boost::python::extract<double> t1(val[9]);
-        boost::python::extract<double> t2(val[10]);
-        boost::python::extract<double> t3(val[11]);
+        boost::python::extract<double> t1(s3v[9]);
+        boost::python::extract<double> t2(s3v[10]);
+        boost::python::extract<double> t3(s3v[11]);
         
-        boost::python::extract<double> s(val[12]);
+        boost::python::extract<double> s(s3v[12]);
         R << r1,r2,r3,
              r4,r5,r6,
              r7,r8,r9;
@@ -402,7 +409,7 @@ void ORBSlamPython::correctLoop(long unsigned int loopMnId,
     
     
         // Deal with loop connection related matters
-        boost::python::list kfList(extractedConValue);
+        //boost::python::list kfList(extractedConValue);
         set<ORB_SLAM2::KeyFrame*> connectedKFs;
         for (int i = 0; i < len(kfList); ++i) {
             boost::python::extract<long unsigned int> mnIdOther(kfList[i]);
@@ -418,7 +425,7 @@ void ORBSlamPython::correctLoop(long unsigned int loopMnId,
         
         // Inform loop closer about the loop
         system->mpLoopCloser->InformExternalLoop(loopKF, curKF, NonCorrectedSim3, CorrectedSim3, LoopConnections);
-    }   
+    }  
 }
 
 boost::python::list ORBSlamPython::getTrajectoryPoints() const
