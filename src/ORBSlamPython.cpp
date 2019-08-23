@@ -334,6 +334,7 @@ void ORBSlamPython::correctLoop(long unsigned int loopMnId,
                                 boost::python::dict loopConnections
                                 ) const
 {   
+    std::cout << "ORBSlamPython: Starting loop correction" << std::endl;
     ORB_SLAM2::LoopClosing::KeyFrameAndPose CorrectedSim3, NonCorrectedSim3;
     map<ORB_SLAM2::KeyFrame*, set<ORB_SLAM2::KeyFrame*> > LoopConnections;
     
@@ -348,7 +349,10 @@ void ORBSlamPython::correctLoop(long unsigned int loopMnId,
         }
         long unsigned int mnId = extractedKey;
         ORB_SLAM2::KeyFrame* pKF = ORBSlamPython::GetKeyFrameById(mnId);
-        
+        if (pKF == NULL) {
+            std::cout << "ORBSlamPython: Got mnId of non-existant keyframe: " << mnId << std::endl;
+            continue;
+        }
         boost::python::list s3v = boost::python::extract<boost::python::list>(corrections[mnId]);
 
         // Deal with sim3 related matters
@@ -400,8 +404,14 @@ void ORBSlamPython::correctLoop(long unsigned int loopMnId,
             std::cout << "Problem with key in connections dictionary" << std::endl;
             continue;
         }
+        
         long unsigned int mnId = extractedKey;
         ORB_SLAM2::KeyFrame* pKF = ORBSlamPython::GetKeyFrameById(mnId);
+        
+        if (pKF == NULL) {
+            std::cout << "ORBSlamPython: Got mnId of non-existant keyframe (2): " << mnId << std::endl;
+            continue;
+        }
         
         boost::python::list kfList = boost::python::extract<boost::python::list>(loopConnections[mnId]);
         
@@ -409,7 +419,12 @@ void ORBSlamPython::correctLoop(long unsigned int loopMnId,
         set<ORB_SLAM2::KeyFrame*> connectedKFs;
         for (int i = 0; i < len(kfList); ++i) {
             boost::python::extract<long unsigned int> mnIdOther(kfList[i]);
-            connectedKFs.insert(ORBSlamPython::GetKeyFrameById(mnIdOther));
+            ORB_SLAM2::KeyFrame* opKF = ORBSlamPython::GetKeyFrameById(mnIdOther);
+            if (opKF == NULL) {
+                std::cout << "ORBSlamPython: Got mnId of non-existant keyframe (3): " << mnIdOther << std::endl;
+                continue;
+            }
+            connectedKFs.insert(opKF);
         }
         
         // Set loop connection
@@ -418,7 +433,16 @@ void ORBSlamPython::correctLoop(long unsigned int loopMnId,
     
     // Find the loop key frame and current key frame
     ORB_SLAM2::KeyFrame* loopKF = ORBSlamPython::GetKeyFrameById(loopMnId);
+    if (loopKF == NULL) {
+        std::cout << "ORBSlamPython: loopKF mnId points to non-existant keyframe (3): " << loopMnId << std::endl;
+        return;
+    }
     ORB_SLAM2::KeyFrame* curKF = ORBSlamPython::GetKeyFrameById(curMnId);
+    if (curKF == NULL) {
+        std::cout << "ORBSlamPython: curKF mnId points to non-existant keyframe (3): " << curMnId << std::endl;
+        return;
+    }
+    
     
     // Inform loop closer about the loop
     system->mpLoopCloser->InformExternalLoop(loopKF, curKF, NonCorrectedSim3, CorrectedSim3, LoopConnections); 
