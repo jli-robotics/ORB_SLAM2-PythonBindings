@@ -46,6 +46,7 @@ BOOST_PYTHON_MODULE(orbslam2)
         .def("load_and_process_stereo", &ORBSlamPython::loadAndProcessStereo)
         .def("process_image_stereo", &ORBSlamPython::processStereo)
         .def("load_and_process_rgbd", &ORBSlamPython::loadAndProcessRGBD)
+        .def("process_rgbd", &ORBSlamPython::processRGBD)
         .def("process_image_rgbd", &ORBSlamPython::processRGBD)
         .def("shutdown", &ORBSlamPython::shutdown)
         .def("is_running", &ORBSlamPython::isRunning)
@@ -59,6 +60,7 @@ BOOST_PYTHON_MODULE(orbslam2)
         .def("get_num_features", &ORBSlamPython::getNumFeatures)
         .def("get_num_matched_features", &ORBSlamPython::getNumMatches)
         .def("correct_loop", &ORBSlamPython::correctLoop)
+        .def("compute_sim3", &ORBSlamPython::computeSim3)
         .def("activate_localization_mode",  &ORBSlamPython::activateLocalizationMode)
         .def("deactivate_localization_mode",  &ORBSlamPython::deactivateLocalizationMode)
         .def("save_settings", &ORBSlamPython::saveSettings)
@@ -326,6 +328,96 @@ ORB_SLAM2::KeyFrame* ORBSlamPython::GetKeyFrameById(long unsigned int query) con
         }
     }
     return NULL;
+}
+
+boost::python::list ORBSlamPython::computeSim3(boost::python::list p3d1,
+                                               boost::python::list p3d2) const
+{
+    ORB_SLAM2::Sim3Solver* pSolver = new ORB_SLAM2::Sim3Solver(false);
+    boost::python::list result;
+    cv::Mat A(3,3,CV_32F);
+    cv::Mat B(3,3,CV_32F);
+    
+    boost::python::extract<double> _A11(p3d1[0]);
+    double A11 = _A11;
+    boost::python::extract<double> _A12(p3d1[1]);
+    double A12 = _A12;
+    boost::python::extract<double> _A13(p3d1[2]);
+    double A13 = _A13;
+    
+    boost::python::extract<double> _A21(p3d1[3]);
+    double A21 = _A21;
+    boost::python::extract<double> _A22(p3d1[4]);
+    double A22 = _A22;
+    boost::python::extract<double> _A23(p3d1[5]);
+    double A23 = _A23;
+    
+    boost::python::extract<double> _A31(p3d1[6]);
+    double A31 = _A31;
+    boost::python::extract<double> _A32(p3d1[7]);
+    double A32 = _A32;
+    boost::python::extract<double> _A33(p3d1[8]);
+    double A33 = _A33;
+    
+    A = (cv::Mat_<float>(3,3) << A11, A12, A13,
+                                 A21, A22, A23,
+                                 A31, A32, A33);
+   
+    
+    boost::python::extract<double> _B11(p3d2[0]);
+    double B11 = _B11;
+    boost::python::extract<double> _B12(p3d2[1]);
+    double B12 = _B12;
+    boost::python::extract<double> _B13(p3d2[2]);
+    double B13 = _B13;
+    
+    boost::python::extract<double> _B21(p3d2[3]);
+    double B21 = _B21;
+    boost::python::extract<double> _B22(p3d2[4]);
+    double B22 = _B22;
+    boost::python::extract<double> _B23(p3d2[5]);
+    double B23 = _B23;
+    
+    boost::python::extract<double> _B31(p3d2[6]);
+    double B31 = _B31;
+    boost::python::extract<double> _B32(p3d2[7]);
+    double B32 = _B32;
+    boost::python::extract<double> _B33(p3d2[8]);
+    double B33 = _B33;
+    
+    B = (cv::Mat_<float>(3,3) << B11, B12, B13,
+                                 B21, B22, B23,
+                                 B31, B32, B33);
+    
+    pSolver->ComputeSim3(A, B);
+    
+    cout << "OSP: I head A" << endl;
+    cout << A << endl;
+    
+    cout << "OSP: I head B" << endl;
+    cout << B << endl;
+    
+    cout << "OSP:" << pSolver->mR12i.at<float>(0,0) << endl;
+    cout << "OSP:" << pSolver->mR12i.at<float>(0,1) << endl;
+    cout << "OSP:" << pSolver->mR12i.at<float>(0,2) << endl;
+    
+    result.append(pSolver->mR12i.at<float>(0,0));
+    result.append(pSolver->mR12i.at<float>(0,1));
+    result.append(pSolver->mR12i.at<float>(0,2));
+    result.append(pSolver->mR12i.at<float>(1,0));
+    result.append(pSolver->mR12i.at<float>(1,1));
+    result.append(pSolver->mR12i.at<float>(1,2));
+    result.append(pSolver->mR12i.at<float>(2,0));
+    result.append(pSolver->mR12i.at<float>(2,1));
+    result.append(pSolver->mR12i.at<float>(2,2));
+    
+    result.append(pSolver->mt12i.at<float>(0,0));
+    result.append(pSolver->mt12i.at<float>(0,1));
+    result.append(pSolver->mt12i.at<float>(0,2));
+    
+    result.append(pSolver->ms12i);
+    
+    return result;
 }
 
 void ORBSlamPython::correctLoop(long unsigned int loopMnId,

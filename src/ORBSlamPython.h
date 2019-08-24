@@ -6,6 +6,7 @@
 #include <boost/python.hpp>
 #include <ORB_SLAM2/System.h>
 #include <ORB_SLAM2/Tracking.h>
+#include <ORB_SLAM2/Sim3Solver.h>
 
 class ORBSlamPython
 {
@@ -36,6 +37,8 @@ public:
                      long unsigned int curMnId,
                      boost::python::dict corrections,
                      boost::python::dict loopConnections) const;
+    boost::python::list computeSim3(boost::python::list p3d1,
+                                    boost::python::list p3d2) const;
     ORB_SLAM2::KeyFrame* GetKeyFrameById(long unsigned int query) const;
     void activateLocalizationMode();
     void deactivateLocalizationMode();
