@@ -40,6 +40,8 @@ public:
     boost::python::list computeSim3(boost::python::list p3d1,
                                     boost::python::list p3d2) const;
     ORB_SLAM2::KeyFrame* GetKeyFrameById(long unsigned int query) const;
+    void saveMap(std::string path);
+    void loadMap(std::string path);
     void activateLocalizationMode();
     void deactivateLocalizationMode();
     bool saveSettings(boost::python::dict settings) const;

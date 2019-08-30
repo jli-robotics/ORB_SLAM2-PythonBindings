@@ -6,6 +6,7 @@
 #include <ORB_SLAM2/Tracking.h>
 #include <ORB_SLAM2/LoopClosing.h>
 #include <ORB_SLAM2/MapPoint.h>
+#include <ORB_SLAM2/Osmap.h>
 #include "ORBSlamPython.h"
 
 #if (PY_VERSION_HEX >= 0x03000000)
@@ -61,6 +62,8 @@ BOOST_PYTHON_MODULE(orbslam2)
         .def("get_num_matched_features", &ORBSlamPython::getNumMatches)
         .def("correct_loop", &ORBSlamPython::correctLoop)
         .def("compute_sim3", &ORBSlamPython::computeSim3)
+        .def("save_map", &ORBSlamPython::saveMap)
+        .def("load_map", &ORBSlamPython::loadMap)
         .def("activate_localization_mode",  &ORBSlamPython::activateLocalizationMode)
         .def("deactivate_localization_mode",  &ORBSlamPython::deactivateLocalizationMode)
         .def("save_settings", &ORBSlamPython::saveSettings)
@@ -391,7 +394,7 @@ boost::python::list ORBSlamPython::computeSim3(boost::python::list p3d1,
     
     pSolver->ComputeSim3(A, B);
     
-    cout << "OSP: I head A" << endl;
+    /*cout << "OSP: I head A" << endl;
     cout << A << endl;
     
     cout << "OSP: I head B" << endl;
@@ -399,7 +402,7 @@ boost::python::list ORBSlamPython::computeSim3(boost::python::list p3d1,
     
     cout << "OSP:" << pSolver->mR12i.at<float>(0,0) << endl;
     cout << "OSP:" << pSolver->mR12i.at<float>(0,1) << endl;
-    cout << "OSP:" << pSolver->mR12i.at<float>(0,2) << endl;
+    cout << "OSP:" << pSolver->mR12i.at<float>(0,2) << endl;*/
     
     result.append(pSolver->mR12i.at<float>(0,0));
     result.append(pSolver->mR12i.at<float>(0,1));
@@ -636,6 +639,14 @@ boost::python::list ORBSlamPython::getAllMapPoints() const {
       );
   }
   return points;
+}
+
+void ORBSlamPython::saveMap(std::string path) {
+  system->SaveMap(path);
+}
+
+void ORBSlamPython::loadMap(std::string path) {
+  system->LoadMap(path);
 }
 
 void ORBSlamPython::activateLocalizationMode()
