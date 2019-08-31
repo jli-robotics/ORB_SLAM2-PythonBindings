@@ -39,6 +39,7 @@ public:
                      boost::python::dict loopConnections) const;
     boost::python::list computeSim3(boost::python::list p3d1,
                                     boost::python::list p3d2) const;
+    void setNotErase(long unsigned int query) const;
     ORB_SLAM2::KeyFrame* GetKeyFrameById(long unsigned int query) const;
     void saveMap(std::string path);
     void loadMap(std::string path);

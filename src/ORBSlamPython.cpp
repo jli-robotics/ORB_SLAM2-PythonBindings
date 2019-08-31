@@ -54,6 +54,7 @@ BOOST_PYTHON_MODULE(orbslam2)
         .def("reset", &ORBSlamPython::reset)
         .def("set_mode", &ORBSlamPython::setMode)
         .def("set_use_viewer", &ORBSlamPython::setUseViewer)
+        .def("set_not_erase", &ORBSlamPython::setNotErase)
         .def("get_keyframe_points", &ORBSlamPython::getKeyframePoints)
         .def("get_trajectory_points", &ORBSlamPython::getTrajectoryPoints)
         .def("get_all_map_points", &ORBSlamPython::getAllMapPoints)
@@ -331,6 +332,11 @@ ORB_SLAM2::KeyFrame* ORBSlamPython::GetKeyFrameById(long unsigned int query) con
         }
     }
     return NULL;
+}
+
+void ORBSlamPython::setNotErase(long unsigned int query) const {
+    ORB_SLAM2::KeyFrame* pKF = ORBSlamPython::GetKeyFrameById(query);
+    pKF->SetKeep();
 }
 
 boost::python::list ORBSlamPython::computeSim3(boost::python::list p3d1,
