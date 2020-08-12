@@ -47,6 +47,7 @@ ${ORB_SLAM2_INCLUDE_DIR}
 ${Boost_INCLUDE_DIRS}
 ${PYTHON_INCLUDE_DIRS}
 ${PYTHON_NUMPY_INCLUDE_DIR}
+/usr/local/opt/protobuf@3.6/include
 )
 if (Pangolin_FOUND)
   include_directories(${Pangolin_INCLUDE_DIRS})
@@ -62,7 +63,7 @@ src/pyboost_cv2_converter.cpp
 src/pyboost_cv3_converter.cpp)
 set_target_properties(${TARGET_MODULE_NAME} PROPERTIES PREFIX "")
 
-target_link_libraries(${TARGET_MODULE_NAME} 
+target_link_libraries(${TARGET_MODULE_NAME}
 ${ORB_SLAM2_LIBRARIES}
 ${OpenCV_LIBS}
 ${Boost_LIBRARIES}
@@ -72,4 +73,4 @@ if (Pangolin_FOUND)
   target_link_libraries(${TARGET_MODULE_NAME} ${Pangolin_LIBRARIES})
 endif()
 
-install(TARGETS ${TARGET_MODULE_NAME} DESTINATION lib/python3.6/dist-packages)
+install(TARGETS ${TARGET_MODULE_NAME} DESTINATION lib/python3.8/site-packages)

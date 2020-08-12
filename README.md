@@ -1,5 +1,8 @@
 # ORB_SLAM2-PythonBindings
-This repository is adapted from jskinn's repository with the same name. 
+
+This branch contains a MAC-compatible codebase. A lot of the dependencies can be installed by following the instructions for [OpenVSLAM](https://openvslam.readthedocs.io/en/master/installation.html). The CMakeList.txt and several source files have been hacked to make this work. You will likely need to adjust CMakeList.txt.
+
+This repository is adapted from jskinn's repository with the same name.
 
 NOTE: Although you will see many mentions of Python 3, we have actually modified the code to work with Python 2.
 
@@ -49,7 +52,7 @@ cmake ..
 make
 make install
 ```
-This will install the .so file to /usr/local/lib/python3.5/dist-packages, such that it should 
+This will install the .so file to /usr/local/lib/python3.5/dist-packages, such that it should
 If you have changed the install location of ORBSLAM2, you need to indicate where it is installed using ``-DORB_SLAM2_DIR=/your/desired/location``,
 which should be the same as the install prefix above (and contain 'include' and 'lib' folders).
 
@@ -77,4 +80,3 @@ You will also need to change the install location on line 73 of CMakeLists.txt t
 This code is licensed under the BSD Simplified license, although it requires and links to ORB_SLAM2, which is available under the GPLv3 license
 
 It uses pyboostcvconverter (https://github.com/Algomorph/pyboostcvconverter) by Gregory Kramida under the MIT licence (see pyboostcvconverter-LICENSE).
-

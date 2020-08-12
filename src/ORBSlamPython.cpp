@@ -9,6 +9,12 @@
 #include <ORB_SLAM2/Osmap.h>
 #include "ORBSlamPython.h"
 
+#if PY_VERSION_HEX >= 0x03000000
+#define NUMPY_IMPORT_ARRAY_RETVAL NULL
+#else
+#define NUMPY_IMPORT_ARRAY_RETVAL
+#endif
+
 #if (PY_VERSION_HEX >= 0x03000000)
 static void* init_ar() {
 #else
@@ -33,7 +39,7 @@ BOOST_PYTHON_MODULE(orbslam2)
         .value("NOT_INITIALIZED", ORB_SLAM2::Tracking::eTrackingState::NOT_INITIALIZED)
         .value("OK", ORB_SLAM2::Tracking::eTrackingState::OK)
         .value("LOST", ORB_SLAM2::Tracking::eTrackingState::LOST);
-    
+
     boost::python::enum_<ORB_SLAM2::System::eSensor>("Sensor")
         .value("MONOCULAR", ORB_SLAM2::System::eSensor::MONOCULAR)
         .value("STEREO", ORB_SLAM2::System::eSensor::STEREO)
@@ -83,7 +89,7 @@ ORBSlamPython::ORBSlamPython(std::string vocabFile, std::string settingsFile, OR
     bUseViewer(false),
     bUseRGB(true)
 {
-    
+
 }
 
 ORBSlamPython::ORBSlamPython(const char* vocabFile, const char* settingsFile, ORB_SLAM2::System::eSensor sensorMode)
@@ -149,7 +155,7 @@ cv::Mat ORBSlamPython::processMono(cv::Mat image, double timestamp)
     {
         return false;
     }*/
-    
+
     cv::Mat pose = system->TrackMonocular(image, timestamp);
     return pose;
 }
@@ -346,70 +352,70 @@ boost::python::list ORBSlamPython::computeSim3(boost::python::list p3d1,
     boost::python::list result;
     cv::Mat A(3,3,CV_32F);
     cv::Mat B(3,3,CV_32F);
-    
+
     boost::python::extract<double> _A11(p3d1[0]);
     double A11 = _A11;
     boost::python::extract<double> _A12(p3d1[1]);
     double A12 = _A12;
     boost::python::extract<double> _A13(p3d1[2]);
     double A13 = _A13;
-    
+
     boost::python::extract<double> _A21(p3d1[3]);
     double A21 = _A21;
     boost::python::extract<double> _A22(p3d1[4]);
     double A22 = _A22;
     boost::python::extract<double> _A23(p3d1[5]);
     double A23 = _A23;
-    
+
     boost::python::extract<double> _A31(p3d1[6]);
     double A31 = _A31;
     boost::python::extract<double> _A32(p3d1[7]);
     double A32 = _A32;
     boost::python::extract<double> _A33(p3d1[8]);
     double A33 = _A33;
-    
+
     A = (cv::Mat_<float>(3,3) << A11, A12, A13,
                                  A21, A22, A23,
                                  A31, A32, A33);
-   
-    
+
+
     boost::python::extract<double> _B11(p3d2[0]);
     double B11 = _B11;
     boost::python::extract<double> _B12(p3d2[1]);
     double B12 = _B12;
     boost::python::extract<double> _B13(p3d2[2]);
     double B13 = _B13;
-    
+
     boost::python::extract<double> _B21(p3d2[3]);
     double B21 = _B21;
     boost::python::extract<double> _B22(p3d2[4]);
     double B22 = _B22;
     boost::python::extract<double> _B23(p3d2[5]);
     double B23 = _B23;
-    
+
     boost::python::extract<double> _B31(p3d2[6]);
     double B31 = _B31;
     boost::python::extract<double> _B32(p3d2[7]);
     double B32 = _B32;
     boost::python::extract<double> _B33(p3d2[8]);
     double B33 = _B33;
-    
+
     B = (cv::Mat_<float>(3,3) << B11, B12, B13,
                                  B21, B22, B23,
                                  B31, B32, B33);
-    
+
     pSolver->ComputeSim3(A, B);
-    
+
     /*cout << "OSP: I head A" << endl;
     cout << A << endl;
-    
+
     cout << "OSP: I head B" << endl;
     cout << B << endl;
-    
+
     cout << "OSP:" << pSolver->mR12i.at<float>(0,0) << endl;
     cout << "OSP:" << pSolver->mR12i.at<float>(0,1) << endl;
     cout << "OSP:" << pSolver->mR12i.at<float>(0,2) << endl;*/
-    
+
     result.append(pSolver->mR12i.at<float>(0,0));
     result.append(pSolver->mR12i.at<float>(0,1));
     result.append(pSolver->mR12i.at<float>(0,2));
@@ -419,13 +425,13 @@ boost::python::list ORBSlamPython::computeSim3(boost::python::list p3d1,
     result.append(pSolver->mR12i.at<float>(2,0));
     result.append(pSolver->mR12i.at<float>(2,1));
     result.append(pSolver->mR12i.at<float>(2,2));
-    
+
     result.append(pSolver->mt12i.at<float>(0,0));
     result.append(pSolver->mt12i.at<float>(0,1));
     result.append(pSolver->mt12i.at<float>(0,2));
-    
+
     result.append(pSolver->ms12i);
-    
+
     return result;
 }
 
@@ -434,11 +440,11 @@ void ORBSlamPython::correctLoop(long unsigned int loopMnId,
                                 boost::python::dict corrections,
                                 boost::python::dict loopConnections
                                 ) const
-{   
+{
     std::cout << "ORBSlamPython: Starting loop correction" << std::endl;
     ORB_SLAM2::LoopClosing::KeyFrameAndPose CorrectedSim3, NonCorrectedSim3;
     map<ORB_SLAM2::KeyFrame*, set<ORB_SLAM2::KeyFrame*> > LoopConnections;
-    
+
     boost::python::list keys = corrections.keys();
     for (int index = 0; index < boost::python::len(keys); ++index)
     {
@@ -459,7 +465,7 @@ void ORBSlamPython::correctLoop(long unsigned int loopMnId,
         // Deal with sim3 related matters
         //boost::python::list val(extractedValue);
         Eigen::Matrix<double,3,3> R;
-        
+
         boost::python::extract<double> r1(s3v[0]);
         boost::python::extract<double> r2(s3v[1]);
         boost::python::extract<double> r3(s3v[2]);
@@ -469,33 +475,33 @@ void ORBSlamPython::correctLoop(long unsigned int loopMnId,
         boost::python::extract<double> r7(s3v[6]);
         boost::python::extract<double> r8(s3v[7]);
         boost::python::extract<double> r9(s3v[8]);
-        
+
         boost::python::extract<double> t1(s3v[9]);
         boost::python::extract<double> t2(s3v[10]);
         boost::python::extract<double> t3(s3v[11]);
-        
+
         boost::python::extract<double> s(s3v[12]);
         R << r1,r2,r3,
              r4,r5,r6,
              r7,r8,r9;
-             
+
         Eigen::Matrix<double,3,1> T;
         T << t1,t2,t3;
-        
+
         g2o::Sim3 sim3Corrected(R, T, s);
-        
+
         // Set corrected pose
         CorrectedSim3[pKF] = sim3Corrected;
-        
+
         cv::Mat Tiw = pKF->GetPose();
         cv::Mat Riw = Tiw.rowRange(0,3).colRange(0,3);
         cv::Mat tiw = Tiw.rowRange(0,3).col(3);
         g2o::Sim3 g2oSiw(ORB_SLAM2::Converter::toMatrix3d(Riw),ORB_SLAM2::Converter::toVector3d(tiw),1.0);
-        
+
         // Set non-corrected pose
         NonCorrectedSim3[pKF]=g2oSiw;
-    } 
-    
+    }
+
     boost::python::list conKeys = loopConnections.keys();
     for (int index = 0; index < boost::python::len(conKeys); ++index)
     {
@@ -505,17 +511,17 @@ void ORBSlamPython::correctLoop(long unsigned int loopMnId,
             std::cout << "Problem with key in connections dictionary" << std::endl;
             continue;
         }
-        
+
         long unsigned int mnId = extractedKey;
         ORB_SLAM2::KeyFrame* pKF = ORBSlamPython::GetKeyFrameById(mnId);
-        
+
         if (pKF == NULL) {
             std::cout << "ORBSlamPython: Got mnId of non-existant keyframe (2): " << mnId << std::endl;
             continue;
         }
-        
+
         boost::python::list kfList = boost::python::extract<boost::python::list>(loopConnections[mnId]);
-        
+
         // Deal with loop connection related matters
         set<ORB_SLAM2::KeyFrame*> connectedKFs;
         for (int i = 0; i < len(kfList); ++i) {
@@ -527,11 +533,11 @@ void ORBSlamPython::correctLoop(long unsigned int loopMnId,
             }
             connectedKFs.insert(opKF);
         }
-        
+
         // Set loop connection
         LoopConnections[pKF] = connectedKFs;
     }
-    
+
     // Find the loop key frame and current key frame
     ORB_SLAM2::KeyFrame* loopKF = ORBSlamPython::GetKeyFrameById(loopMnId);
     if (loopKF == NULL) {
@@ -543,10 +549,10 @@ void ORBSlamPython::correctLoop(long unsigned int loopMnId,
         std::cout << "ORBSlamPython: curKF mnId points to non-existant keyframe (3): " << curMnId << std::endl;
         return;
     }
-    
-    
+
+
     // Inform loop closer about the loop
-    system->mpLoopCloser->InformExternalLoop(loopKF, curKF, NonCorrectedSim3, CorrectedSim3, LoopConnections); 
+    system->mpLoopCloser->InformExternalLoop(loopKF, curKF, NonCorrectedSim3, CorrectedSim3, LoopConnections);
 }
 
 boost::python::list ORBSlamPython::getTrajectoryPoints() const
@@ -631,10 +637,10 @@ boost::python::list ORBSlamPython::getAllMapPoints() const {
   {
       return boost::python::list();
   }
-  
+
   boost::python::list points;
   const vector<ORB_SLAM2::MapPoint*> &vpMPs = system->mpMap->GetAllMapPoints();
-  
+
   for(size_t i=0, iend=vpMPs.size(); i<iend;i++)
   {
       if(vpMPs[i]->isBad())
@@ -697,7 +703,7 @@ boost::python::dict ORBSlamPython::loadSettings() const
 bool ORBSlamPython::saveSettingsFile(boost::python::dict settings, std::string settingsFilename)
 {
     cv::FileStorage fs(settingsFilename.c_str(), cv::FileStorage::WRITE);
-    
+
     boost::python::list keys = settings.keys();
     for (int index = 0; index < boost::python::len(keys); ++index)
     {
@@ -707,21 +713,21 @@ bool ORBSlamPython::saveSettingsFile(boost::python::dict settings, std::string s
             continue;
         }
         std::string key = extractedKey;
-        
+
         boost::python::extract<int> intValue(settings[key]);
         if (intValue.check())
         {
             fs << key << int(intValue);
             continue;
         }
-        
+
         boost::python::extract<float> floatValue(settings[key]);
         if (floatValue.check())
         {
             fs << key << float(floatValue);
             continue;
         }
-        
+
         boost::python::extract<std::string> stringValue(settings[key]);
         if (stringValue.check())
         {
@@ -729,7 +735,7 @@ bool ORBSlamPython::saveSettingsFile(boost::python::dict settings, std::string s
             continue;
         }
     }
-    
+
     return true;
 }
 
@@ -741,7 +747,7 @@ boost::python::dict ORBSlamPython::loadSettingsFile(std::string settingsFilename
 {
     cv::FileStorage fs(settingsFilename.c_str(), cv::FileStorage::READ);
     cv::FileNode root = fs.root();
-    if (root.isMap()) 
+    if (root.isMap())
     {
         return readMap(root);
     }
@@ -764,7 +770,7 @@ boost::python::dict readMap(cv::FileNode fn, int depth)
         for (; it != itEnd; ++it) {
             cv::FileNode item = *it;
             std::string key = item.name();
-            
+
             if (item.isNone())
             {
                 map[key] = boost::python::object();
@@ -801,7 +807,7 @@ boost::python::list readSequence(cv::FileNode fn, int depth)
         cv::FileNodeIterator it = fn.begin(), itEnd = fn.end();
         for (; it != itEnd; ++it) {
             cv::FileNode item = *it;
-            
+
             if (item.isNone())
             {
                 sequence.append(boost::python::object());
